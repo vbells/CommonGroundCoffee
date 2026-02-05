@@ -21,5 +21,7 @@ namespace DataAccessLayer.Data
 
         public DbSet<Orders> Orders { get; set; }
 
+        public DbSet<Product> Products { get; set; }
+
     }
 }
