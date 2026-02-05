@@ -19,5 +19,7 @@ namespace DataAccessLayer.Data
         // DbSet for Customers table is sql
         public DbSet<Customer> Customers { get; set; }
 
+        public DbSet<Orders> Orders { get; set; }
+
     }
 }
