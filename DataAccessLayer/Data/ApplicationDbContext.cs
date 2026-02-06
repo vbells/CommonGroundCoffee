@@ -23,5 +23,7 @@ namespace DataAccessLayer.Data
 
         public DbSet<Product> Products { get; set; }
 
+        public DbSet<Preferences> Preferences { get; set; }
+
     }
 }

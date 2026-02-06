@@ -1,0 +1,47 @@
+﻿@model IEnumerable<DataAccessLayer.Entities.Preferences>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Pref_ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Pref_ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Pref_ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
