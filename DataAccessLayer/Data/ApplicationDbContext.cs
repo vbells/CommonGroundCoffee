@@ -25,5 +25,7 @@ namespace DataAccessLayer.Data
 
         public DbSet<Preferences> Preferences { get; set; }
 
+        public DbSet<Order_Items> Order_Items { get; set; }
+
     }
 }
