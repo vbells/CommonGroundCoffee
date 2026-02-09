@@ -14,7 +14,7 @@ namespace DataAccessLayer.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Order_ID { get; set; }
         public int Customer_ID { get; set; }
-        [Foreign Key(nameof(Customer_ID))]
+        [ForeignKey(nameof(Customer_ID))]
         public Customer Customer { get; set; }
 
         public DateTime OrderDate { get; set; }

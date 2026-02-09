@@ -16,11 +16,11 @@ namespace DataAccessLayer.Entities
         public int Pref_ID { get; set; }
 
         public int Customer_ID { get; set; }
-        [Foreign key(nameof(Customer_ID))]
+        [ForeignKey(nameof(Customer_ID))]
         public Customer Customer { get; set; }
        
         public int Product_ID { get; set; }
-        [Foreign key(nameof (Product_ID))]
+        [ForeignKey(nameof (Product_ID))]
         public Product Product { get; set; }
 
         public string Notes { get; set; }
