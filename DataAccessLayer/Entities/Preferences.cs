@@ -15,11 +15,14 @@ namespace DataAccessLayer.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Pref_ID { get; set; }
 
-        [ForeignKey(nameof(Customer))]
         public int Customer_ID { get; set; }
+        [Foreign key(nameof(Customer_ID))]
+        public Customer Customer { get; set; }
        
-        [ForeignKey(nameof(Product))]
         public int Product_ID { get; set; }
+        [Foreign key(nameof (Product_ID))]
+        public Product Product { get; set; }
+
         public string Notes { get; set; }
     }
 }

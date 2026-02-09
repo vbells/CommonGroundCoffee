@@ -14,10 +14,15 @@ namespace DataAccessLayer.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Order_Item_ID { get; set; }
-        [ForeignKey(nameof(Orders))]
+
         public int Order_ID { get; set; }
-        [ForeignKey(nameof(Product))]
+        [Foreign key (nameof (Order_Item_ID))]
+        public Orders Order { get; set; }
+
         public int Product_ID { get; set; }
+        [Foreign key (nameof(Product_ID))]
+        public Product Product { get; set; }
+
         public int Quantity { get; set; }
         public decimal Price_at_Purchase { get; set; }
 
