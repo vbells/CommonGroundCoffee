@@ -24,6 +24,10 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddHttpContextAccessor();  // Needed for CartService
+builder.Services.AddSession();               // Needed to store cart in session
+builder.Services.AddScoped<ICartService, CartService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -36,8 +40,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthentication();
+app.UseSession();      
 app.UseAuthorization();
 
 // Controller route
