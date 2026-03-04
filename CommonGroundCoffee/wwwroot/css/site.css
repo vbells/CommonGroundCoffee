@@ -20,3 +20,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Navigation bar styling */
+.navbar {
+    background-color: #1e3a8a; /* Dark blue */
+}
