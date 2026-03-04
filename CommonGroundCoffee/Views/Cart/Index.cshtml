@@ -1,0 +1,40 @@
+﻿@using BusinessLogicLayer
+@model Cart
+
+<h2>Your Shopping Cart</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Product_Name</td>
+                <td>@item.Price</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Price* item.Quantity)</td>
+                <td>
+                    <a asp-action="Remove"
+                       asp-route-productId="@item.Product_ID"
+                       class="btn btn-danger">
+                        Remove
+                    </a>
+                </td>
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <p>Your cart is empty.</p>
+        }
+    </tbody>
+</table>
+
+<h4>Total: @Model.GetTotal()</h4>
