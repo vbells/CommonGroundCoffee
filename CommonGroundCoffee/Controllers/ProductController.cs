@@ -16,5 +16,16 @@ namespace CommonGroundCoffee.Controllers
             var products = await productService.GetProductsAsync();
             return View(products);
         }
+        // get product details
+        public async Task<IActionResult> Details(int id)
+        {
+            var products = await productService.GetProductsAsync();
+            var product = products.FirstOrDefault(p => p.Product_ID == id);
+
+            if (product == null)
+                return NotFound();
+
+            return View(product);
+        }
     }
 }
