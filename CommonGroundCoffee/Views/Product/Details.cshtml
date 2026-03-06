@@ -25,7 +25,11 @@
                 <strong>Quantity Available:</strong> @Model.Quantity_Available
             </p>
 
-            <button class="btn btn-dark mt-3">Add to Cart</button>
+            <form asp-controller="Cart" asp-action="Add" method="post">
+                <input type="hidden" name="productId" value="@Model.Product_ID" />
+
+                <button type="submit" class="btn btn-dark mt-3">Add to Cart</button>
+            </form>
         </div>
 
     </div>
