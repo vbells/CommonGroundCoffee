@@ -9,7 +9,7 @@ namespace BusinessLogicLayer
     public interface ICartService
     {
         Cart GetCart();
-        void AddToCart(int productId, int quantity);
+        Task AddToCart(int productId, int quantity);
         void RemoveFromCart(int productId);
     }
 }

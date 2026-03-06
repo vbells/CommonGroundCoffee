@@ -11,5 +11,7 @@ namespace DataAccessLayer.Interfaces
     {
         // creating GetProductsAsync inside the interface to be implemented
         Task<IEnumerable<Product>> GetProductsAsync();
+        Task<Product?> GetByIdAsync(int id);     // async version
+     
     }
 }

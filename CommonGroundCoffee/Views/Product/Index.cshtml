@@ -1,10 +1,56 @@
 ﻿@model IEnumerable<DataAccessLayer.Entities.Product>
 
 @{
+    ViewData["Title"] = "Shop";
+}
+
+<div class="container py-5">
+
+    <h1 class="text-center mb-5">Shop Our Products</h1>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <a asp-action="Details"
+                   asp-route-id="@item.Product_ID"
+                   class="text-decoration-none text-dark">
+
+                    <div class="card h-100 shadow-sm border-0 product-card">
+
+                        <img src="~/images/products/winter-blend-mockup-l.png"
+                             class="card-img-top"
+                             alt="Product image"
+                             style="height: 220px; object-fit: cover;" />
+
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@item.Product_Name</h5>
+                            <p class="text-muted small mb-2">
+                                @item.Product_Type
+                            </p>
+
+                            <p class="fw-bold">
+                                @item.Unit_Price.ToString("C")
+                            </p>
+                        </div>
+
+                    </div>
+
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@* Original table-based layout for reference:   
+
+@* @model IEnumerable<DataAccessLayer.Entities.Product>
+
+@{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Products</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -56,4 +102,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Entities;
+
 
 namespace BusinessLogicLayer
 {
@@ -35,9 +34,9 @@ namespace BusinessLogicLayer
             return cart;
         }
 
-        public void AddToCart(int productId, int quantity)
+        public async Task AddToCart(int productId, int quantity)
         {
-            var product = _productService.GetById(productId);
+            var product = await _productService.GetByIdAsync(productId);
             if (product == null) return;
 
             var cart = GetCart();

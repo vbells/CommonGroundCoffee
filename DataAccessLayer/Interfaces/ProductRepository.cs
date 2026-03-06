@@ -23,5 +23,24 @@ namespace DataAccessLayer.Interfaces
             return await _context.Products.ToListAsync();
         }
 
+        public async Task<Product?> GetByIdAsync(int id)
+        {
+            return _context.Products.FirstOrDefault(p => p.Product_ID == id);
+        }
+
+        public void AddProduct(Product product)
+        {
+            _context.Products.Add(product);
+        }
+
+        public void UpdateProduct(Product product)
+        {
+            _context.Products.Update(product);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            _context.SaveChanges();
+        }
     }
 }
