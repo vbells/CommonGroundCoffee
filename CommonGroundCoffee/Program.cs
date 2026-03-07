@@ -1,7 +1,8 @@
 using BusinessLogicLayer;
 using DataAccessLayer.Data;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Interfaces;  // Make sure you have this
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories; 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
