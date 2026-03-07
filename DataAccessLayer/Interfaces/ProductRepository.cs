@@ -1,13 +1,11 @@
 ﻿using DataAccessLayer.Data;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Interfaces
+namespace DataAccessLayer.Repositories
 {
     public class ProductRepository : IProductRepository
     {
@@ -15,7 +13,7 @@ namespace DataAccessLayer.Interfaces
 
         public ProductRepository(ApplicationDbContext applicationDbContext)
         {
-            this._context = applicationDbContext;
+            _context = applicationDbContext;
         }
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
@@ -25,22 +23,28 @@ namespace DataAccessLayer.Interfaces
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return _context.Products.FirstOrDefault(p => p.Product_ID == id);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Product_ID == id); // added await and Async
         }
 
-        public void AddProduct(Product product)
+        public async Task AddProductAsync(Product product)
         {
-            _context.Products.Add(product);
+            await _context.Products.AddAsync(product);  
+            await _context.SaveChangesAsync();          // made it async
         }
 
-        public void UpdateProduct(Product product)
+        public async Task UpdateProductAsync(Product product)
         {
             _context.Products.Update(product);
+            await _context.SaveChangesAsync();
         }
-
-        public async Task SaveChangesAsync()
+        public async Task DeleteProductAsync(int id)
         {
-            _context.SaveChanges();
+            var product = await _context.Products.FindAsync(id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
