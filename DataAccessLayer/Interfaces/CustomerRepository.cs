@@ -18,10 +18,23 @@ namespace DataAccessLayer.Interfaces
             this._context = applicationDbContext;
         }
 
-        //implementing GetCustomersAsync from interface
+        // existing
         public async Task<IEnumerable<Customer>> GetCustomersAsync()
-            {
-                return await _context.Customers.ToListAsync();
+        {
+            return await _context.Customers.ToListAsync();
         }
+
+        // ── Auth methods ──────────────────────────────────────────────
+        public async Task<Customer?> GetByEmailAsync(string email) =>
+            await _context.Customers.FirstOrDefaultAsync(c => c.Email == email.ToLower());
+
+        public async Task<bool> EmailExistsAsync(string email) =>
+            await _context.Customers.AnyAsync(c => c.Email == email.ToLower());
+
+        public async Task AddAsync(Customer customer) =>
+            await _context.Customers.AddAsync(customer);
+
+        public async Task SaveChangesAsync() =>
+            await _context.SaveChangesAsync();
     }
 }
