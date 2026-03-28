@@ -1,6 +1,9 @@
 ﻿using BusinessLogicLayer;
-using Microsoft.AspNetCore.Mvc;
+using BusinessLogicLayer.ViewModels;
+using DataAccessLayer.Data;
 using DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CommonGroundCoffee.Controllers
 {
@@ -8,16 +11,35 @@ namespace CommonGroundCoffee.Controllers
     {
         // IProductService to get/fetch products from db
         private readonly IProductService _productService;
+        private readonly ApplicationDbContext _context;
 
-        public AdminController(IProductService productService)
+        public AdminController(IProductService productService, ApplicationDbContext context)
         {
             _productService = productService;
+            _context = context;
         }
 
         // home page for admin dashboard
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            var viewModel = new AdminDashboardViewModel
+            {
+                TotalProducts = await _context.Products.CountAsync(),
+                TotalOrders = await _context.Orders.CountAsync(),
+                TotalCustomers = await _context.Customers.CountAsync(),
+                TotalRevenue = await _context.Orders.SumAsync(o => o.TotalAmount),
+                RecentOrders = await _context.Orders
+                    .Include(o => o.Customer)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Take(5)
+                    .ToListAsync(),
+                LowStockProducts = await _context.Products
+                    .Where(p => p.Quantity_Available <= 10)
+                    .OrderBy(p => p.Quantity_Available)
+                    .ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // manage products page

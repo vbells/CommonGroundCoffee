@@ -18,9 +18,9 @@ namespace CommonGroundCoffee.Controllers
             return View(cart);
         }
 
-        public IActionResult Add(int productId, int quantity = 1)
+        public async Task<IActionResult> Add(int productId, int quantity = 1)
         {
-            _cartService.AddToCart(productId, quantity);
+            await _cartService.AddToCart(productId, quantity);
             return RedirectToAction("Index");
         }
 
