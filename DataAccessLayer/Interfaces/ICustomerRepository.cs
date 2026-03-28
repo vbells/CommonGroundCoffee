@@ -12,5 +12,10 @@ namespace DataAccessLayer.Interfaces
         // creating GetCustomersAsync inside the interface to be implemented
         Task<IEnumerable<Customer>> GetCustomersAsync();
 
+        Task<Customer?> GetByEmailAsync(string email);
+        Task<bool> EmailExistsAsync(string email);
+        Task AddAsync(Customer customer);
+        Task SaveChangesAsync();
+
     }
 }
