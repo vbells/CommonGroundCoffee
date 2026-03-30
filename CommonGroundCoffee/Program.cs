@@ -1,8 +1,10 @@
 using BusinessLogicLayer;
+using BusinessLogicLayer.Interfaces;
+using BusinessLogicLayer.Services;
 using DataAccessLayer.Data;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Interfaces;  // Make sure you have this
-using Microsoft.AspNetCore.Identity;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,20 +15,29 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShopConnectionString")));
 
-// Identity
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>();
+// Cookie auth (replaces Identity)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+    });
 
-// --- Add these lines for Dependency Injection ---
+builder.Services.AddAuthorization();
+
+// Existing DI
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
-
-builder.Services.AddHttpContextAccessor();  // Needed for CartService
-builder.Services.AddSession();               // Needed to store cart in session
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
 builder.Services.AddScoped<ICartService, CartService>();
+
+// Auth DI
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
@@ -38,17 +49,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+
 app.UseAuthentication();
-app.UseSession();      
+app.UseSession();
 app.UseAuthorization();
 
-// Controller route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapRazorPages();
 
 app.Run();

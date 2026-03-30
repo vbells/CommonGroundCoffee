@@ -23,5 +23,14 @@ namespace DataAccessLayer.Entities
         public string ZipCode { get; set; }
         public string PhoneNumber { get; set; }
 
+        [Required]
+        [StringLength(256)]
+        public string Email { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
     }
 }

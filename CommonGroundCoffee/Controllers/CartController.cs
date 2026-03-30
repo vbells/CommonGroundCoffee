@@ -18,9 +18,9 @@ namespace CommonGroundCoffee.Controllers
             return View(cart);
         }
 
-        public IActionResult Add(int productId, int quantity = 1)
+        public async Task<IActionResult> Add(int productId, int quantity = 1)
         {
-            _cartService.AddToCart(productId, quantity);
+            await _cartService.AddToCart(productId, quantity);
             return RedirectToAction("Index");
         }
 
@@ -28,6 +28,19 @@ namespace CommonGroundCoffee.Controllers
         {
             _cartService.RemoveFromCart(productId);
             return RedirectToAction("Index");
+        }
+
+        public IActionResult UpdateQuantity(int productId, string direction)
+        {
+            _cartService.UpdateQuantity(productId, direction);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult GetCartCount()
+        {
+            var cart = _cartService.GetCart();
+            return Json(cart.Items.Sum(x => x.Quantity));
         }
     }
 }
