@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using DataAccessLayer.Interfaces;
-using DataAccessLayer.Entities;
-
 
 namespace BusinessLogicLayer
 {
@@ -10,7 +8,6 @@ namespace BusinessLogicLayer
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IProductService _productService;
-
         private const string CartSessionKey = "Cart";
 
         public CartService(IHttpContextAccessor httpContextAccessor,
@@ -24,13 +21,11 @@ namespace BusinessLogicLayer
         {
             var session = _httpContextAccessor.HttpContext!.Session;
             var cart = session.GetObject<Cart>(CartSessionKey);
-
             if (cart == null)
             {
                 cart = new Cart();
                 session.SetObject(CartSessionKey, cart);
             }
-
             return cart;
         }
 
@@ -40,7 +35,6 @@ namespace BusinessLogicLayer
             if (product == null) return;
 
             var cart = GetCart();
-
             cart.AddItem(new CartItem
             {
                 Product_ID = product.Product_ID,
@@ -48,7 +42,6 @@ namespace BusinessLogicLayer
                 Price = product.Unit_Price,
                 Quantity = quantity
             });
-
             SaveCart(cart);
         }
 
@@ -59,10 +52,30 @@ namespace BusinessLogicLayer
             SaveCart(cart);
         }
 
+        
+        public void UpdateQuantity(int productId, string direction)
+        {
+            var cart = GetCart();
+            var item = cart.Items.FirstOrDefault(x => x.Product_ID == productId);
+            if (item == null) return;
+
+            if (direction == "up")
+            {
+                item.Quantity++;
+            }
+            else if (direction == "down")
+            {
+                item.Quantity--;
+                if (item.Quantity <= 0)
+                    cart.RemoveItem(productId); // auto remove if hits 0
+            }
+
+            SaveCart(cart);
+        }
+
         private void SaveCart(Cart cart)
         {
-            _httpContextAccessor.HttpContext!.Session
-                .SetObject(CartSessionKey, cart);
+            _httpContextAccessor.HttpContext!.Session.SetObject(CartSessionKey, cart);
         }
     }
 }

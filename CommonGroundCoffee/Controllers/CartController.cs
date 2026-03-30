@@ -29,5 +29,18 @@ namespace CommonGroundCoffee.Controllers
             _cartService.RemoveFromCart(productId);
             return RedirectToAction("Index");
         }
+
+        public IActionResult UpdateQuantity(int productId, string direction)
+        {
+            _cartService.UpdateQuantity(productId, direction);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult GetCartCount()
+        {
+            var cart = _cartService.GetCart();
+            return Json(cart.Items.Sum(x => x.Quantity));
+        }
     }
 }
