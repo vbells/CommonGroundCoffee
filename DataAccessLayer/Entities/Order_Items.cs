@@ -16,7 +16,8 @@ namespace DataAccessLayer.Entities
         public int Order_Item_ID { get; set; }
 
         public int Order_ID { get; set; }
-        [ForeignKey (nameof (Order_Item_ID))]
+
+        [ForeignKey (nameof (Order_ID))]
         public Orders Order { get; set; }
 
         public int Product_ID { get; set; }

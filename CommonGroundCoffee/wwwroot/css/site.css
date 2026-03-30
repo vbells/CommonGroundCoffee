@@ -1,26 +1,162 @@
+﻿/* ===== Base ===== */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Focus styles */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-/* Navigation bar styling */
+/* ===== Navbar ===== */
 .navbar {
-    background-color: #1e3a8a; /* Dark blue */
+    background-color: #4b2e2e !important; /* Dark coffee brown */
+}
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+        color: white !important;
+    }
+
+        .navbar .nav-link:hover {
+            color: #f0d9c0 !important; /* light coffee accent */
+        }
+
+/* ===== Hero Section ===== */
+.hero-section {
+    background-image: url('/images/home/HomePicture.png');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    margin-bottom: 40px;
+}
+
+.hero-title {
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+/* ===== Skew Section Images ===== */
+.skew-image {
+    flex: 0 0 30%;
+    max-width: 400px;
+}
+
+    .skew-image img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: block;
+        border-radius: 15px;
+        object-fit: cover;
+    }
+
+/* ===== Skew Text ===== */
+.skew-text {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+    .skew-text h2 {
+        color: #522504;
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .skew-text p {
+        color: #5C3100;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+
+/* ===== Footer ===== */
+.custom-footer {
+    background-color: #f5f5f5;
+    border-top: 4px solid #4a2c2a;
+    padding: 25px 0;
+    margin-top: auto; /* 🔥 keeps footer at bottom */
+}
+
+/* Footer layout */
+.footer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Social icons */
+.footer-social a {
+    color: #333;
+    margin-right: 15px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    .footer-social a:hover {
+        color: #6b3e3d;
+    }
+
+/* Brand */
+.footer-brand {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    font-weight: bold;
+    color: #4a2c2a;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Footer links */
+.footer-links a {
+    text-decoration: none;
+    color: #555;
+    margin: 0 8px;
+    transition: color 0.3s ease;
+}
+
+.footer-links span {
+    color: #aaa;
+}
+
+.footer-links a:hover {
+    color: #000;
+}
+
+/* ===== Responsive Footer ===== */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .footer-social {
+        order: 1;
+    }
+
+    .footer-brand {
+        order: 2;
+    }
+
+    .footer-links {
+        order: 3;
+    }
 }
