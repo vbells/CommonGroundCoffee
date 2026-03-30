@@ -16,6 +16,33 @@ namespace CommonGroundCoffee.Controllers
             var products = await productService.GetProductsAsync();
             return View(products);
         }
+
+        //coffee page 
+        public async Task<IActionResult> Coffee(string filter = "All")
+        {
+            var products = await productService.GetProductsAsync();
+            var coffeeTypes = new[] { "Coffee", "Single Origin", "Blends" };
+            var filtered = products.Where(p => coffeeTypes.Contains(p.Product_Type));
+
+            if (filter != "All")
+                filtered = filtered.Where(p => p.Product_Type == filter);
+
+            ViewBag.Filter = filter;
+            return View(filtered);
+        }
+        // merch page
+        public async Task<IActionResult> Merch(string filter = "All")
+        {
+            var products = await productService.GetProductsAsync();
+            var filtered = products.Where(p => p.Product_Type == "Merch" || p.Product_Type == "Other");
+
+            if (filter != "All")
+                filtered = filtered.Where(p => p.Product_Type == filter);
+
+            ViewBag.Filter = filter;
+            return View(filtered);
+        }
+
         // get product details
         public async Task<IActionResult> Details(int id)
         {
