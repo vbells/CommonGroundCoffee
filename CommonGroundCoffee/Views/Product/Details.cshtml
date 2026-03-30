@@ -21,9 +21,9 @@
 
             <h4 class="mt-4">@Model.Unit_Price.ToString("C")</h4>
 
-            <p class="mt-2">
+         <!--   <p class="mt-2">
                 <strong>Quantity Available:</strong> @Model.Quantity_Available
-            </p>
+               </p>-->
 
             <form asp-controller="Cart" asp-action="Add" method="post">
                 <input type="hidden" name="productId" value="@Model.Product_ID" />
