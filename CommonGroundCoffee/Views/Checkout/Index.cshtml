@@ -1,0 +1,46 @@
+﻿@model BusinessLogicLayer.Cart
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2 class="mt-4 mb-3">Order Summary</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Product_Name</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@((item.Price * item.Quantity).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end fw-bold">Total:</td>
+            <td class="fw-bold">@Model.GetTotal().ToString("C")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="d-flex gap-2 mt-3">
+    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary">Back to Cart</a>
+    <form asp-controller="Checkout" asp-action="PlaceOrder" method="post">
+        <button type="submit" class="btn btn-success">Place Order</button>
+    </form>
+</div>
