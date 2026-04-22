@@ -12,5 +12,6 @@ namespace DataAccessLayer.Interfaces
         Task<IEnumerable<Orders>> GetOrdersByCustomerIdAsync(int customerId);
         Task<IEnumerable<Order_Items>> GetOrderItemsByOrderIdAsync(int orderId);
         Task SaveChangesAsync();
+        Task<IEnumerable<string>> GetPurchasedProductNamesByCustomerIdAsync(int customerId);
     }
 }

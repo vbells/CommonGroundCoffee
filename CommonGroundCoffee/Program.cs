@@ -41,9 +41,18 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Orders ? new
+// Orders
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
+
+// Cafes Near Me
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<ICafeSearchService>(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+    var apiKey = builder.Configuration["Gemini:ApiKey"];
+    return new CafeSearchService(httpClientFactory, apiKey!);
+});
 
 var app = builder.Build();
 

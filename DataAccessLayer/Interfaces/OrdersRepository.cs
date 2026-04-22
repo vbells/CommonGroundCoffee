@@ -42,5 +42,16 @@ namespace DataAccessLayer.Repositories
 
         public async Task SaveChangesAsync() =>
             await _context.SaveChangesAsync();
+
+        public async Task<IEnumerable<string>> GetPurchasedProductNamesByCustomerIdAsync(int customerId)
+        {
+            return await _context.Order_Items
+                .Include(oi => oi.Order)
+                .Include(oi => oi.Product)
+                .Where(oi => oi.Order.Customer_ID == customerId)
+                .Select(oi => oi.Product.Product_Name)
+                .Distinct()
+                .ToListAsync();
+        }
     }
 }
