@@ -134,12 +134,30 @@
                 .then(response => response.json())
                 .then(count => {
                     var badge = document.getElementById('cart-count');
-                    badge.textContent = count;
-                    badge.style.display = count === 0 ? 'none' : 'inline';
+                    //only show count if greater than 0
+                    if (count > 0){
+                        badge.textContent = count;
+                        badge.style.display = 'inline';
+                    }
+                    else {
+                            badge.style.display = 'none';
+                        }
                 });
         }
-
         updateCartCount();
+
+        //create toast message instead of redirecting to cart page
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 m-4 p-3 bg-dark text-white rounded shadow';
+            toast.style.cssText = 'z-index:9999; transition: opacity 0.5s;';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 2000);
+        }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -34,7 +34,7 @@
                             </p>
                         </div>
                         <div class="card-footer bg-white border-0 text-center pb-3">
-                            <form asp-controller="Cart" asp-action="Add" method="post">
+                            <form asp-controller="Cart" asp-action="Add" method="post" class="add-to-cart-form">
                                 <input type="hidden" name="productId" value="@item.Product_ID" />
                                 <input type="hidden" name="quantity" value="1" />
                                 <button type="submit" class="btn btn-dark w-100">Add to Cart</button>
@@ -48,3 +48,24 @@
         }
     </div>
 </div>
+
+<!-- add script to show toast message -->
+@section Scripts {
+    <script>
+        document.querySelectorAll('.add-to-cart-form').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    updateCartCount();
+                    showToast('✓ Added to cart!');
+                }
+            });
+        });
+    </script>
+}

@@ -45,7 +45,8 @@ namespace CommonGroundCoffee.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, customer.Customer_ID.ToString()),
                 new Claim(ClaimTypes.Name, "Hi "+customer.FirstName + "!"),
-                new Claim(ClaimTypes.Email, customer.Email)
+                new Claim(ClaimTypes.Email, customer.Email),
+                new Claim(ClaimTypes.Role, customer.IsAdmin ? "Admin" : "Customer")
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

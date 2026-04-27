@@ -31,6 +31,7 @@ namespace DataAccessLayer.Entities
         public string PasswordHash { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public bool IsAdmin { get; set; } = false;
 
     }
 }
