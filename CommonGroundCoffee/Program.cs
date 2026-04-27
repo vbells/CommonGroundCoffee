@@ -11,11 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Database
+
+// =========================
+// DATABASE
+// =========================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShopConnectionString")));
 
-// Cookie auth
+
+// =========================
+// AUTHENTICATION (COOKIE)
+// =========================
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -28,34 +34,45 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-// Product
+
+// =========================
+// BUSINESS LAYER SERVICES
+// =========================
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-// Cart
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddScoped<ICartService, CartService>();
 
-// Auth
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Orders
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 
-// Cafes Near Me
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<ICafeSearchService>(provider =>
-{
-    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
-    var apiKey = builder.Configuration["Gemini:ApiKey"];
-    return new CafeSearchService(httpClientFactory, apiKey!);
-});
+builder.Services.AddScoped<ICafeSearchService, CafeSearchService>();
 
+
+// =========================
+// ?? GEMINI AI (NEW SMART SEARCH)
+// =========================
+builder.Services.AddHttpClient<GeminiService>();
+builder.Services.AddScoped<GeminiService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<GeminiService>();
+
+
+// =========================
+// BUILD APP
+// =========================
 var app = builder.Build();
 
+
+// =========================
+// PIPELINE
+// =========================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -64,12 +81,17 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
 
+
+// =========================
+// ROUTES
+// =========================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

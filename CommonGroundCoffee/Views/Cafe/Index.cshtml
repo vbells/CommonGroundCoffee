@@ -4,12 +4,10 @@
     bool searchDone = Model.SearchPerformed && Model.Results.Any();
 }
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
 <div class="container mt-4" style="max-width:720px;">
 
     <h2 class="text-center mb-1" style="font-family:Georgia,serif;">Cafes Near Me</h2>
-    <p class="text-center text-muted mb-4">Personalized recommendations based on your taste and location.</p>
+    <p class="text-center text-muted mb-4">Find coffee shops based on your taste and location.</p>
 
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
@@ -47,8 +45,8 @@
             <!-- Preferences -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="fw-bold mb-1">Preferences</h5>
-                    <p class="text-muted small mb-2">Based on your past purchases and anything you add below.</p>
+                    <h5 class="fw-bold mb-1">Coffee Preferences</h5>
+                    <p class="text-muted small mb-2">Based on your Coffee & Blends purchases.</p>
 
                     @if (Model.PurchasedProducts.Any())
                     {
@@ -59,10 +57,14 @@
                             }
                         </div>
                     }
+                    else
+                    {
+                        <p class="text-muted small">No coffee purchases yet.</p>
+                    }
 
                     <input asp-for="ManualPreferences" class="form-control"
-                           placeholder="e.g. oat milk, quiet atmosphere, outdoor seating" />
-                    <div class="form-text">Add anything extra you're looking for in a cafe.</div>
+                           placeholder="e.g. strong espresso, oat milk, quiet vibe" />
+                    <div class="form-text">Add any other preferences.</div>
                 </div>
             </div>
 
@@ -84,15 +86,9 @@
                 </div>
             </div>
 
-            <div id="loading" class="text-center mb-3" style="display:none;">
-                <div class="spinner-border spinner-border-sm text-dark me-1"></div>
-                Finding cafes near you...
-            </div>
-
             <button type="submit" class="btn w-100 text-white mb-5"
-                    style="background:#1a1a1a;"
-                    onclick="document.getElementById('loading').style.display='block'">
-                Find My Cafe
+                    style="background:#1a1a1a;">
+                Find Cafes
             </button>
 
         </form>
@@ -100,44 +96,42 @@
     else
     {
         <!-- RESULTS PAGE -->
-        <div id="map" style="height:320px; border-radius:8px; margin-bottom:24px;"></div>
+        <h4 class="mb-3">Top Coffee Shops Near You</h4>
 
-        @foreach (var cafe in Model.Results)
+        @if (Model.Results.Count == 0)
         {
-            <div class="card mb-3 shadow-sm">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-2">@cafe.Name</h5>
-                    <p class="mb-1 small">
-                        <i class="bi bi-geo-alt-fill text-danger"></i>
-                        <strong>Address:</strong> @cafe.Address
-                    </p>
-                    <p class="mb-1 small">
-                        <i class="bi bi-signpost-split"></i>
-                        <strong>Distance:</strong> @cafe.Distance
-                    </p>
-                    <p class="mb-2 small">
-                        <i class="bi bi-stars text-warning"></i>
-                        <strong>Match:</strong> @cafe.WhyItMatches
-                    </p>
-                    <a href="https://www.google.com/search?q=@Uri.EscapeDataString(cafe.Name + " " + cafe.Address)"
-                       target="_blank"
-                       class="btn btn-sm text-white" style="background:#1a1a1a;">
-                        Learn More
-                    </a>
+            <div class="alert alert-info">No cafes found in your area. Try expanding your search distance.</div>
+        }
+        else
+        {
+            @foreach (var cafe in Model.Results)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">@cafe.Name</h5>
+                        <p class="mb-1 small text-muted">
+                            <i class="bi bi-geo-alt"></i> @cafe.Address
+                        </p>
+                        <p class="mb-2 small text-muted">
+                            <i class="bi bi-signpost-2"></i> @cafe.Distance away
+                        </p>
+                        <p class="mb-0 small">
+                            <strong>Why it's a match:</strong> @cafe.WhyItMatches
+                        </p>
+                    </div>
                 </div>
-            </div>
+            }
         }
 
         <div class="text-center mb-5">
             <a asp-controller="Cafe" asp-action="Index" class="btn btn-outline-secondary">
-                Update Preferences
+                New Search
             </a>
         </div>
     }
 
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     function getLocation() {
         if (!navigator.geolocation) {
@@ -152,51 +146,6 @@
         }, function () {
             alert('Could not get location. Please enter your address manually.');
         });
-    }
-
-    @if (searchDone)
-    {
-            <text>
-            var map = L.map('map');
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            var cafes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Results));
-            var bounds = [];
-
-            cafes.forEach(function (cafe) {
-                fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(cafe.address))
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            var lat = parseFloat(data[0].lat);
-                            var lon = parseFloat(data[0].lon);
-                            L.marker([lat, lon])
-                                .addTo(map)
-                                .bindPopup('<b>' + cafe.name + '</b><br>' + cafe.address + '<br>' + cafe.distance);
-                            bounds.push([lat, lon]);
-                            if (bounds.length > 0) map.fitBounds(bounds, { padding: [40, 40] });
-                        }
-                    });
-            });
-
-            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
-            {
-                    <text>
-                    L.circleMarker([@Model.Latitude, @Model.Longitude], {
-                        radius: 8, fillColor: '#4285F4', color: '#fff', weight: 2, fillOpacity: 1
-                    }).addTo(map).bindPopup('Your location');
-                    map.setView([@Model.Latitude, @Model.Longitude], 13);
-                    </text>
-            }
-            else
-            {
-                    <text>
-                    map.setView([41.8827, -87.6233], 12);
-                    </text>
-            }
-            </text>
     }
 </script>
 
