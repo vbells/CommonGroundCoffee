@@ -17,11 +17,14 @@ namespace CommonGroundCoffee.Controllers
             var cart = _cartService.GetCart();
             return View(cart);
         }
-
+        
+        // update method so it now returns JSON instead of redirecting to cart index page
+        [HttpPost]
         public async Task<IActionResult> Add(int productId, int quantity = 1)
         {
             await _cartService.AddToCart(productId, quantity);
-            return RedirectToAction("Index");
+            var cart = _cartService.GetCart();
+            return Json(new { success = true, cartItemCount = cart.Items.Sum(i => i.Quantity) });
         }
 
         public IActionResult Remove(int productId)
