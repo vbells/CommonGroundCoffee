@@ -51,11 +51,13 @@
 
                     <!-- Right Nav -->
                     <ul class="navbar-nav">
-                        <!-- Admin tab for test purposes
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Admin" asp-action="Dashboard">Admin Panel</a>
-                        </li>
-                         -->
+                        <!-- Admin tab -->
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Admin" asp-action="Dashboard">Admin Panel</a>
+                            </li>
+                        }
                         <a class="nav-link text-white position-relative" asp-controller="Cart" asp-action="Index">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
                                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4M5 13a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
@@ -133,12 +135,30 @@
                 .then(response => response.json())
                 .then(count => {
                     var badge = document.getElementById('cart-count');
-                    badge.textContent = count;
-                    badge.style.display = count === 0 ? 'none' : 'inline';
+                    //only show count if greater than 0
+                    if (count > 0){
+                        badge.textContent = count;
+                        badge.style.display = 'inline';
+                    }
+                    else {
+                            badge.style.display = 'none';
+                        }
                 });
         }
-
         updateCartCount();
+
+        //create toast message instead of redirecting to cart page
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 m-4 p-3 bg-dark text-white rounded shadow';
+            toast.style.cssText = 'z-index:9999; transition: opacity 0.5s;';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 2000);
+        }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
