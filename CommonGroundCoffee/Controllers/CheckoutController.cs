@@ -136,5 +136,28 @@ namespace CommonGroundCoffee.Controllers
             // Basic length check
             return cleaned.Length >= 13 && cleaned.Length <= 19;
         }
+
+        // GET /Checkout/OrderHistory
+        public async Task<IActionResult> OrderHistory()
+        {
+            var customerIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(customerIdClaim) ||
+                !int.TryParse(customerIdClaim, out var customerId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var orders = await _ordersService.GetOrderHistoryAsync(customerId);
+
+            return View(orders);
+        }
+        // GET /Checkout/OrderDetails/5
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            var items = await _ordersService.GetOrderItemsAsync(id);
+            return View(items);
+        }
     }
+
 }
