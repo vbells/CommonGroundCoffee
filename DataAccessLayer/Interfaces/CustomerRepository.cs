@@ -36,5 +36,10 @@ namespace DataAccessLayer.Interfaces
 
         public async Task SaveChangesAsync() =>
             await _context.SaveChangesAsync();
+
+        public async Task<Customer?> GetByIdAsync(int customerId)
+        {
+            return await _context.Customers.FirstOrDefaultAsync(c => c.Customer_ID == customerId);
+        }
     }
 }

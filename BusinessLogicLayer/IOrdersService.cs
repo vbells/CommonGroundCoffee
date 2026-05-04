@@ -10,5 +10,9 @@ namespace BusinessLogicLayer
     public interface IOrdersService
     {
         Task<IEnumerable<Orders>> GetOrdersAsync();
+        Task<bool> CheckoutAsync(int customerId);
+        Task<IEnumerable<Orders>> GetOrderHistoryAsync(int customerId);
+        Task<IEnumerable<Order_Items>> GetOrderItemsAsync(int orderId);
+
     }
 }

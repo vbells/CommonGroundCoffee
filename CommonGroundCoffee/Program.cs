@@ -11,11 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Database
+// =========================
+// DATABASE
+// =========================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShopConnectionString")));
 
-// Cookie auth (replaces Identity)
+// =========================
+// AUTHENTICATION (COOKIE)
+// =========================
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -28,19 +32,42 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-// Existing DI
+// =========================
+// BUSINESS LAYER SERVICES
+// =========================
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddScoped<ICartService, CartService>();
 
-// Auth DI
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrdersService, OrdersService>();
+
+// =========================
+// CAFES NEAR ME
+// =========================
+builder.Services.AddHttpClient();
+builder.Services.AddLogging();
+builder.Services.AddScoped<ICafeSearchService>(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+    var logger = provider.GetRequiredService<ILogger<CafeSearchService>>();
+    return new CafeSearchService(httpClientFactory, logger);
+});
+
+// =========================
+// BUILD APP
+// =========================
 var app = builder.Build();
 
+// =========================
+// PIPELINE
+// =========================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -55,6 +82,9 @@ app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
 
+// =========================
+// ROUTES
+// =========================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

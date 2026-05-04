@@ -77,5 +77,9 @@ namespace BusinessLogicLayer
         {
             _httpContextAccessor.HttpContext!.Session.SetObject(CartSessionKey, cart);
         }
+        public void ClearCart()
+        {
+            _httpContextAccessor.HttpContext!.Session.Remove(CartSessionKey);
+        }
     }
 }

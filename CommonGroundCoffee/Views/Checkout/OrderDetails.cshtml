@@ -1,0 +1,40 @@
+﻿@model IEnumerable<DataAccessLayer.Entities.Order_Items>
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2 class="mt-4 mb-3">Order Details</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price at Purchase</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Product.Product_Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price_at_Purchase.ToString("C")</td>
+                <td>@((item.Price_at_Purchase * item.Quantity).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end fw-bold">Total:</td>
+            <td class="fw-bold">
+                @Model.Sum(i => i.Price_at_Purchase * i.Quantity).ToString("C")
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<a asp-controller="Checkout" asp-action="OrderHistory" class="btn btn-outline-secondary mt-2">
+    Back to Order History
+</a>

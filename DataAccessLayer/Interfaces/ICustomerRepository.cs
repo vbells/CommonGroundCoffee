@@ -15,6 +15,7 @@ namespace DataAccessLayer.Interfaces
         Task<Customer?> GetByEmailAsync(string email);
         Task<bool> EmailExistsAsync(string email);
         Task AddAsync(Customer customer);
+        Task<Customer?> GetByIdAsync(int customerId);
         Task SaveChangesAsync();
 
     }

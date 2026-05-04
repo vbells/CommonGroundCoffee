@@ -1,0 +1,161 @@
+﻿@model CommonGroundCoffee.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+    bool isLoggedIn = User.Identity?.IsAuthenticated == true;
+}
+
+<div class="container mt-4" style="max-width:700px;">
+    <h2 class="mb-4">Checkout</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <form asp-controller="Checkout" asp-action="PlaceOrder" method="post">
+
+        <!-- Personal Info -->
+        <h5 class="fw-bold mb-3 mt-4">Contact Information</h5>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <h5 class="fw-bold mb-3 mt-4">Shipping Address</h5>
+
+        @if (isLoggedIn && !string.IsNullOrWhiteSpace(Model.StreetAddress))
+        {
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" asp-for="UseExistingAddress" id="useExisting" />
+                <label class="form-check-label" for="useExisting">
+                    Use my saved address
+                </label>
+            </div>
+
+            <div id="savedAddressPreview" class="alert alert-info p-2 mb-3">
+                @Model.FirstName @Model.LastName<br>
+                @Model.StreetAddress<br>
+                @Model.City, @Model.State @Model.ZipCode
+            </div>
+        }
+
+        <div id="addressForm">
+            <div class="mb-3">
+                <label asp-for="StreetAddress" class="form-label"></label>
+                <input asp-for="StreetAddress" class="form-control" />
+                <span asp-validation-for="StreetAddress" class="text-danger small"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="City" class="form-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="State" class="form-label"></label>
+                    <input asp-for="State" class="form-control" placeholder="IL" />
+                    <span asp-validation-for="State" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="ZipCode" class="form-label"></label>
+                    <input asp-for="ZipCode" class="form-control" />
+                    <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment -->
+        <h5 class="fw-bold mb-3 mt-4">Payment Information</h5>
+
+        <div class="mb-3">
+            <label asp-for="CardholderName" class="form-label"></label>
+            <input asp-for="CardholderName" class="form-control" />
+            <span asp-validation-for="CardholderName" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CardNumber" class="form-label"></label>
+            <input asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" />
+            <span asp-validation-for="CardNumber" class="text-danger small"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="ExpirationMonth" class="form-label">Expiration</label>
+                <select asp-for="ExpirationMonth" class="form-select">
+                    <option value="">Month</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i.ToString("00")</option>
+                    }
+                </select>
+                <span asp-validation-for="ExpirationMonth" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">&nbsp;</label>
+                <select asp-for="ExpirationYear" class="form-select">
+                    <option value="">Year</option>
+                    @for (int i = 2025; i <= 2035; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <span asp-validation-for="ExpirationYear" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="CVV" class="form-label"></label>
+                <input asp-for="CVV" class="form-control" placeholder="123" maxlength="4" />
+                <span asp-validation-for="CVV" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4 mb-5">
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary">Back to Cart</a>
+            <button type="submit" class="btn btn-success flex-grow-1">Complete Purchase</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    @if (isLoggedIn && !string.IsNullOrWhiteSpace(Model.StreetAddress))
+    {
+            <text>
+            document.getElementById('useExisting').addEventListener('change', function() {
+                document.getElementById('addressForm').style.display = this.checked ? 'none' : 'block';
+            });
+            // Initialize on page load
+            document.getElementById('addressForm').style.display =
+                document.getElementById('useExisting').checked ? 'none' : 'block';
+            </text>
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
