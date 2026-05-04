@@ -1,10 +1,12 @@
-﻿using BusinessLogicLayer.Interfaces;
+﻿using BusinessLogicLayer;
+using BusinessLogicLayer.Interfaces;
 using CommonGroundCoffee.ViewModels;
 using DataAccessLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CommonGroundCoffee.Controllers
 {
@@ -30,8 +32,9 @@ namespace CommonGroundCoffee.Controllers
 
             var model = new CafesNearMeViewModel
             {
-                PurchasedProducts = new List<string>(purchasedProducts),
-                RadiusMiles = 10
+                PurchasedProducts = purchasedProducts.ToList(),
+                RadiusMiles = 10,
+                UsePurchaseHistory = true
             };
 
             return View(model);
@@ -46,10 +49,10 @@ namespace CommonGroundCoffee.Controllers
             var purchasedProducts = await _orderRepository
                 .GetPurchasedProductNamesByCustomerIdAsync(customerId);
 
-            model.PurchasedProducts = new List<string>(purchasedProducts);
+            model.PurchasedProducts = purchasedProducts.ToList();
             model.SearchPerformed = true;
 
-            // determine location string
+            // Determine location
             string location;
             if (!string.IsNullOrWhiteSpace(model.Address))
             {
@@ -68,10 +71,15 @@ namespace CommonGroundCoffee.Controllers
             if (!ModelState.IsValid)
                 return View("Index", model);
 
+            // ← KEY: Only pass purchased products if checkbox is checked
+            var preferencesToUse = model.UsePurchaseHistory
+                ? purchasedProducts.ToList()
+                : new List<string>();
+
             model.Results = await _cafeSearchService.SearchCafesAsync(
                 location,
                 model.RadiusMiles,
-                model.PurchasedProducts,
+                preferencesToUse,
                 model.ManualPreferences);
 
             if (model.Results.Count == 0)

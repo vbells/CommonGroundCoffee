@@ -273,31 +273,31 @@ out center;
         {
             var reasons = new List<string>();
 
+            // Distance reason
             if (distance < 0.5)
                 reasons.Add("closest to you");
             else if (distance < 1.5)
                 reasons.Add("nearby");
             else if (distance < 3)
                 reasons.Add("within easy reach");
+            else
+                reasons.Add($"{distance:F1} miles away");
 
+            // Preference matching
             var prefs = preferences.ToLowerInvariant();
 
             if (prefs.Contains("espresso"))
-                reasons.Add("great espresso");
-            if (prefs.Contains("latte"))
+                reasons.Add("specializes in espresso");
+            else if (prefs.Contains("latte"))
                 reasons.Add("known for lattes");
-            if (prefs.Contains("cold"))
+            else if (prefs.Contains("cold"))
                 reasons.Add("excellent cold brew");
-            if (prefs.Contains("dark"))
+            else if (prefs.Contains("dark"))
                 reasons.Add("offers dark roasts");
-
-            if (!reasons.Any(r =>
-                r.Contains("espresso") ||
-                r.Contains("latte") ||
-                r.Contains("brew")))
-            {
-                reasons.Add("great coffee selection");
-            }
+            else if (!string.IsNullOrWhiteSpace(preferences))
+                reasons.Add("matches your preferences");
+            else
+                reasons.Add("great coffee");
 
             return string.Join(", ", reasons);
         }

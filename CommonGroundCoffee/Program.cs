@@ -11,13 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-
 // =========================
 // DATABASE
 // =========================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ShopConnectionString")));
-
 
 // =========================
 // AUTHENTICATION (COOKIE)
@@ -33,7 +31,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
-
 
 // =========================
 // BUSINESS LAYER SERVICES
@@ -51,24 +48,22 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<ICafeSearchService, CafeSearchService>();
-
-
 // =========================
-// ?? GEMINI AI (NEW SMART SEARCH)
+// CAFES NEAR ME
 // =========================
-builder.Services.AddHttpClient<GeminiService>();
-builder.Services.AddScoped<GeminiService>();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<GeminiService>();
-
+builder.Services.AddLogging();
+builder.Services.AddScoped<ICafeSearchService>(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+    var logger = provider.GetRequiredService<ILogger<CafeSearchService>>();
+    return new CafeSearchService(httpClientFactory, logger);
+});
 
 // =========================
 // BUILD APP
 // =========================
 var app = builder.Build();
-
 
 // =========================
 // PIPELINE
@@ -81,13 +76,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
-
 
 // =========================
 // ROUTES
