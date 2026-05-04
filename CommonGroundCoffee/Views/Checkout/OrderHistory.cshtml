@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DataAccessLayer.Entities.Orders>
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<h2 class="mt-4 mb-3">Order History</h2>
+
+@if (!Model.Any())
+{
+    <p>You have no past orders. <a asp-controller="Product" asp-action="Index">Start shopping</a></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Order_ID</td>
+                    <td>@order.OrderDate.ToLocalTime().ToString("MMM dd, yyyy")</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                        <a asp-controller="Checkout" asp-action="OrderDetails"
+                           asp-route-id="@order.Order_ID"
+                           class="btn btn-outline-primary btn-sm">View Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

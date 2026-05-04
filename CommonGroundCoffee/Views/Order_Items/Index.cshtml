@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DataAccessLayer.Entities.Order_Items>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Order_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price_at_Purchase)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Order_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price_at_Purchase)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Order_Item_ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Order_Item_ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Order_Item_ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

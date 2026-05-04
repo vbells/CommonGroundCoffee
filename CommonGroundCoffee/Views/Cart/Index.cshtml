@@ -1,0 +1,68 @@
+﻿@model BusinessLogicLayer.Cart
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<h2 class="mt-4 mb-3">Your Cart</h2>
+
+@if (!Model.Items.Any())
+{
+    <p>Your cart is empty. <a asp-controller="Product" asp-action="Index">Continue shopping</a></p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Product_Name</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <a asp-controller="Cart" asp-action="UpdateQuantity"
+                               asp-route-productId="@item.Product_ID"
+                               asp-route-direction="down"
+                               class="btn btn-outline-secondary btn-sm">&#9660;</a>
+
+                            <span class="fw-bold">@item.Quantity</span>
+
+                            <a asp-controller="Cart" asp-action="UpdateQuantity"
+                               asp-route-productId="@item.Product_ID"
+                               asp-route-direction="up"
+                               class="btn btn-outline-secondary btn-sm">&#9650;</a>
+                        </div>
+                    </td>
+                    <td>@((item.Price * item.Quantity).ToString("C"))</td>
+                    <td>
+                        <a asp-controller="Cart" asp-action="Remove"
+                           asp-route-productId="@item.Product_ID"
+                           class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Total:</td>
+                <td colspan="2" class="fw-bold">@Model.GetTotal().ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary">Continue Shopping</a>
+}
+<div class="d-flex justify-content-end mt-3">
+    <a asp-controller="Checkout" asp-action="Index" class="btn btn-success">
+        Proceed to Checkout
+    </a>
+</div>

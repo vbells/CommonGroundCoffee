@@ -1,0 +1,169 @@
+﻿@model CommonGroundCoffee.ViewModels.CafesNearMeViewModel
+@{
+    ViewData["Title"] = "Cafes Near Me";
+    bool searchDone = Model.SearchPerformed && Model.Results.Any();
+}
+
+<div class="container mt-4" style="max-width:720px;">
+
+    <h2 class="text-center mb-1" style="font-family:Georgia,serif;">Cafes Near Me</h2>
+    <p class="text-center text-muted mb-4">Find coffee shops based on your taste and location.</p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-warning">@Model.ErrorMessage</div>
+    }
+
+    @if (!searchDone)
+    {
+        <!-- SEARCH FORM -->
+        <form asp-controller="Cafe" asp-action="Search" method="post">
+
+            <!-- Location -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-1">Location</h5>
+                    <p class="text-muted small mb-3">Enter your address or use your current location.</p>
+
+                    <input asp-for="Address" class="form-control mb-2"
+                           placeholder="e.g. 123 Main St, Chicago, IL" />
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm w-100"
+                            onclick="getLocation()">
+                        Use My Current Location
+                    </button>
+
+                    <p id="location-status" class="text-success small mt-2" style="display:none;">
+                        Location detected.
+                    </p>
+
+                    <input type="hidden" asp-for="Latitude" id="Latitude" />
+                    <input type="hidden" asp-for="Longitude" id="Longitude" />
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-1">Coffee Preferences</h5>
+                    <p class="text-muted small mb-3">Choose what to use for matching.</p>
+
+                    @if (Model.PurchasedProducts.Any())
+                    {
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" asp-for="UsePurchaseHistory" id="usePurchaseHistory" />
+                                <label class="form-check-label" for="usePurchaseHistory">
+                                    Use my past coffee purchases
+                                </label>
+                            </div>
+                        </div>
+
+                        @if (Model.UsePurchaseHistory)
+                        {
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                @foreach (var product in Model.PurchasedProducts)
+                                {
+                                    <span class="badge bg-secondary">@product</span>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-3">No past coffee purchases yet.</p>
+                    }
+
+                    <label class="form-label">Manual Preferences</label>
+                    <input asp-for="ManualPreferences" class="form-control"
+                           placeholder="e.g. strong espresso, oat milk, quiet vibe" />
+                    <div class="form-text">Add any other preferences you're looking for.</div>
+                </div>
+            </div>
+
+            <!-- Distance -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-1">Distance</h5>
+                    <p class="text-muted small mb-3">How far are you willing to travel?</p>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="small">1 mi</span>
+                        <input asp-for="RadiusMiles" type="range" class="form-range flex-grow-1"
+                               min="1" max="50" step="1"
+                               oninput="document.getElementById('radius-display').textContent = this.value" />
+                        <span class="fw-bold" style="min-width:60px;">
+                            <span id="radius-display">@Model.RadiusMiles</span> mi
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn w-100 text-white mb-5"
+                    style="background:#1a1a1a;">
+                Find Cafes
+            </button>
+
+        </form>
+    }
+    else
+    {
+        <!-- RESULTS PAGE -->
+        <h4 class="mb-3">Top Coffee Shops Near You</h4>
+
+        @if (Model.Results.Count == 0)
+        {
+            <div class="alert alert-info">No cafes found in your area. Try expanding your search distance.</div>
+        }
+        else
+        {
+            @foreach (var cafe in Model.Results)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">@cafe.Name</h5>
+                        <p class="mb-1 small text-muted">
+                            <i class="bi bi-geo-alt"></i> @cafe.Address
+                        </p>
+                        <p class="mb-1 small text-muted">
+                            <i class="bi bi-signpost-2"></i> @cafe.Distance away
+                        </p>
+                        <p class="mb-0 small">
+                            <strong>Why it's a match:</strong> @cafe.WhyItMatches
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="text-center mb-5">
+            <a asp-controller="Cafe" asp-action="Index" class="btn btn-outline-secondary">
+                New Search
+            </a>
+        </div>
+    }
+
+</div>
+
+<script>
+    function getLocation() {
+        if (!navigator.geolocation) {
+            alert('Geolocation not supported by your browser.');
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            document.getElementById('Latitude').value = pos.coords.latitude;
+            document.getElementById('Longitude').value = pos.coords.longitude;
+            document.getElementById('Address').value = '';
+            document.getElementById('location-status').style.display = 'block';
+        }, function () {
+            alert('Could not get location. Please enter your address manually.');
+        });
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
